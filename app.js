@@ -1,7 +1,7 @@
 /** Server for shipit. */
 
 import express from "express";
-import { NotFoundError } from "./expressError";
+import { NotFoundError } from "./expressError.js";
 import shipmentsRoutes from "./routes/orders.js";
 
 const app = express();
