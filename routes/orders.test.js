@@ -25,4 +25,30 @@ describe("POST /orders/:id/ship", function () {
       .send();
     expect(resp.statusCode).toEqual(400);
   });
+
+  test("throws error if invalid data in request body", async function () {
+    const resp = await request(app)
+      .post("/orders/123/ship")
+      .send({
+        "productId": 99,
+        "name": 123,
+        "addr": 123,
+        "zip": 23
+      });
+    expect(resp.statusCode).toEqual(400);
+
+    expect(resp.body).toEqual(
+      {
+        "error": {
+          "message": [
+            "instance.productId must be greater than or equal to 1000",
+            "instance.name is not of a type(s) string",
+            "instance.addr is not of a type(s) string",
+            "instance.zip is not of a type(s) string"
+          ],
+          "status": 400
+        }
+      }
+    );
+  });
 });
