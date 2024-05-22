@@ -26,6 +26,8 @@ describe("POST /orders/:id/ship", function () {
     expect(resp.statusCode).toEqual(400);
   });
 
+  //TODO: consider submitting one where a field is missing bc JSON schema requires these are required.
+  //TODO: add an additional field to test the additional field in schema
   test("throws error if invalid data in request body", async function () {
     const resp = await request(app)
       .post("/orders/123/ship")
@@ -50,5 +52,7 @@ describe("POST /orders/:id/ship", function () {
         }
       }
     );
+
+    //TODO: can isolate the array of error messages instead resp.body.error.message
   });
 });
