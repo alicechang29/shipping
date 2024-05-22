@@ -1,10 +1,26 @@
-import { describe, test, expect, beforeAll, afterAll, vi } from "vitest";
-import * as shipping from "../shipItApi.js";
+import { describe, test, expect, beforeAll, afterAll, afterEach } from "vitest";
 import request from "supertest";
 import app from "../app.js";
+import { SHIPIT_SHIP_URL } from "../shipItApi.js";
+import { mock, mockServer } from "./apiMock.js";
+
+const BASE_URL = "";
+const RESOURCE_URL = "orders/123/ship";
+
+beforeAll(function () { mockServer.listen(); });
+afterEach(function () { mockServer.resetHandlers(); });
+afterAll(function () { mockServer.close(); });
 
 describe("POST /orders/:id/ship", function () {
   test("valid", async function () {
+
+    mock(
+      "post",
+      SHIPIT_SHIP_URL,
+      "",
+      { trackingId: 789 }
+    );
+
     const resp = await request(app).post("/orders/123/ship").send({
       productId: 1000,
       name: "Test Tester",
@@ -12,11 +28,20 @@ describe("POST /orders/:id/ship", function () {
       zip: "12345-6789",
     });
 
+    console.log("RESPONSE BODY IS ------->", resp.body);
+
     expect(resp.body).toEqual({
       cost: expect.any(String),
       trackingId: expect.any(Number),
       orderId: 123,
     });
+
+    expect(resp.body).toEqual({
+      cost: expect.any(String),
+      trackingId: 789,
+      orderId: 123,
+    });
+
   });
 
   test("throws error if empty request body", async function () {
